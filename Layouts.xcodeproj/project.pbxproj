@@ -28,6 +28,7 @@
 		ED66FEDC07F6E44DDCA42AF7 /* LayoutEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1562E3F93AB804B7088094AD /* LayoutEngine.swift */; };
 		EE8B9759D75057BCBD163287 /* Preset.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FF253DC74553A35C4DBAF7 /* Preset.swift */; };
 		F3D1DF2612098D8A3ED8ABEF /* LayoutCanvas.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9AE963E2BBCEFA9D5C086E3 /* LayoutCanvas.swift */; };
+		F619FBC3008B17CCD9285D7F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E7C205A9C9585C7F0BFCB8A3 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -52,6 +53,7 @@
 		D18265A85E68FAC9EDBC60A4 /* AX.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AX.swift; sourceTree = "<group>"; };
 		D8386F3D0AA6F0E9A07FF59D /* SlotInspector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotInspector.swift; sourceTree = "<group>"; };
 		D9AE963E2BBCEFA9D5C086E3 /* LayoutCanvas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutCanvas.swift; sourceTree = "<group>"; };
+		E7C205A9C9585C7F0BFCB8A3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F7172FBE588AB48A271CEFCA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		F8AD5971DFC919249344F59C /* Signing.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Signing.xcconfig; sourceTree = "<group>"; };
 		FCD6CD925F0CACD24BC09F97 /* Layouts.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Layouts.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -87,6 +89,7 @@
 		2F28ABB97C41A375942CA2DA /* Layouts */ = {
 			isa = PBXGroup;
 			children = (
+				E7C205A9C9585C7F0BFCB8A3 /* Assets.xcassets */,
 				F7172FBE588AB48A271CEFCA /* Info.plist */,
 				3A105540EE4AA4683DFAB235 /* Layouts.entitlements */,
 				A09B8E0F3D62A1CD0071A951 /* LayoutsApp.swift */,
@@ -163,6 +166,7 @@
 			buildConfigurationList = 50A89ACBBCFB2E906AE1C8A4 /* Build configuration list for PBXNativeTarget "Layouts" */;
 			buildPhases = (
 				1A1D8098AE818274B47D9857 /* Sources */,
+				5A0CF840AA28A7412DC7E49D /* Resources */,
 				C3D2CA3CC42F2492E8CCBE6E /* Frameworks */,
 			);
 			buildRules = (
@@ -213,6 +217,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		5A0CF840AA28A7412DC7E49D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F619FBC3008B17CCD9285D7F /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		1A1D8098AE818274B47D9857 /* Sources */ = {
@@ -323,7 +338,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 0.1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = io.github.almcclaw.Layouts;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 6.0;
@@ -345,7 +360,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 0.1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = io.github.almcclaw.Layouts;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 6.0;

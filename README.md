@@ -1,10 +1,17 @@
-# Layouts
+<p align="center">
+  <img src="docs/icon.png" width="128" alt="Layouts icon">
+</p>
 
-**Save your window arrangements as presets and restore them with one hotkey.**
+<h1 align="center">Layouts</h1>
+
+<p align="center">
+  <b>Save your window arrangements as presets and restore them with one hotkey.</b><br>
+  <a href="https://github.com/AlMcClaw-ctrl/layouts/releases/latest">Download</a> · macOS 14+ · Apple Silicon &amp; Intel · MIT
+</p>
 
 A tiny native macOS menu bar app. Arrange your windows once (say Chrome on the left and Claude on the right, or two Claude windows side by side, or Hermes plus Claude), save the arrangement as a preset, and bring it back any time with a hotkey.
 
-<!-- Screenshot: docs/editor.png -->
+<p align="center"><img src="docs/editor-three.png" width="720" alt="Preset editor with three windows"></p>
 
 ## Features
 
@@ -71,6 +78,11 @@ Then grant access in **System Settings → Privacy & Security → Accessibility 
 3. Press **⌃⌥1** (or click the preset in the menu).
 4. Fine-tune it under **Settings → Presets**: drag the tiles, set what happens with other windows, and set how missing windows are opened.
 
+<p align="center">
+  <img src="docs/editor-inspector.png" width="49%" alt="Editing a window slot">
+  <img src="docs/general.png" width="49%" alt="General settings">
+</p>
+
 ### presets.json example
 
 ```json
@@ -118,6 +130,7 @@ Then grant access in **System Settings → Privacy & Security → Accessibility 
 ## Credits
 
 - [KeyboardShortcuts](https://github.com/sindresorhus/KeyboardShortcuts) by Sindre Sorhus, used for the global hotkeys and the shortcut recorder.
+- App icon is drawn in code: `swift Tools/make-icon.swift docs/icon.png`
 - Built in one early morning together with [Claude Code](https://claude.com/claude-code).
 
 ## License
