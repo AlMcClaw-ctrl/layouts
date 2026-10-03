@@ -1,0 +1,15 @@
+// Signatur. Standard: ad-hoc ("-"), damit jeder ohne Apple-Developer-Account bauen kann.
+//
+// Tipp: Ad-hoc-Builds bekommen bei jedem Build eine neue Signatur, dann fragt macOS
+// die Bedienungshilfen-Freigabe jedes Mal neu ab. Mit eigenem Team bleibt sie erhalten:
+// Config/Local.xcconfig anlegen (wird nicht eingecheckt), z. B.
+//
+//   DEVELOPMENT_TEAM = ABCDE12345
+//   CODE_SIGN_STYLE = Automatic
+//   CODE_SIGN_IDENTITY = Apple Development
+
+CODE_SIGN_STYLE = Manual
+CODE_SIGN_IDENTITY = -
+DEVELOPMENT_TEAM =
+
+#include? "Local.xcconfig"

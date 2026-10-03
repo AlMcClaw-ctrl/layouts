@@ -1,0 +1,42 @@
+name: Layouts
+options:
+  bundleIdPrefix: io.github.almcclaw
+  deploymentTarget:
+    macOS: "14.0"
+  createIntermediateGroups: true
+packages:
+  KeyboardShortcuts:
+    url: https://github.com/sindresorhus/KeyboardShortcuts
+    from: "2.0.0"
+targets:
+  Layouts:
+    type: application
+    platform: macOS
+    sources: [Layouts]
+    configFiles:
+      Debug: Config/Signing.xcconfig
+      Release: Config/Signing.xcconfig
+    info:
+      path: Layouts/Info.plist
+      properties:
+        CFBundleDisplayName: Layouts
+        LSUIElement: true
+        LSApplicationCategoryType: public.app-category.productivity
+        NSAppleEventsUsageDescription: Layouts steuert Terminal, um Fenster mit Projektordner zu öffnen.
+        CFBundleURLTypes:
+          - CFBundleURLName: io.github.almcclaw.Layouts
+            CFBundleURLSchemes: [layouts]
+    entitlements:
+      path: Layouts/Layouts.entitlements
+      properties:
+        com.apple.security.automation.apple-events: true
+    dependencies:
+      - package: KeyboardShortcuts
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.almcclaw.Layouts
+        MARKETING_VERSION: "0.1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        SWIFT_VERSION: "6.0"
+        ENABLE_APP_SANDBOX: NO
+        ENABLE_HARDENED_RUNTIME: YES
