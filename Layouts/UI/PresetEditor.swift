@@ -1,7 +1,7 @@
 import KeyboardShortcuts
 import SwiftUI
 
-/// Rechte Seite der Einstellungen: ein Preset mit Bildschirm-Vorschau bearbeiten.
+/// Right side of the settings: edit one preset with a display preview.
 struct PresetEditor: View {
     @Binding var preset: Preset
     @Environment(LayoutEngine.self) private var engine
@@ -14,9 +14,9 @@ struct PresetEditor: View {
             header
 
             if NSScreen.screens.count > 1 {
-                Picker("Bildschirm", selection: $screenRef) {
+                Picker("Display", selection: $screenRef) {
                     ForEach(NSScreen.screens, id: \.self) { s in
-                        Text(s == Screens.primary ? "Hauptbildschirm" : s.localizedName).tag(Screens.ref(for: s))
+                        Text(s == Screens.primary ? "Main Display" : s.localizedName).tag(Screens.ref(for: s))
                     }
                 }
                 .pickerStyle(.segmented)
@@ -34,25 +34,25 @@ struct PresetEditor: View {
                         Button(app.name) { addSlot(app) }
                     }
                 } label: {
-                    Label("Fenster hinzufügen", systemImage: "plus")
+                    Label("Add Window", systemImage: "plus")
                 }
                 .fixedSize()
 
                 Button {
                     takeOverCurrentWindows()
                 } label: {
-                    Label("Aktuelle Fensterpositionen übernehmen", systemImage: "camera.viewfinder")
+                    Label("Use Current Window Positions", systemImage: "camera.viewfinder")
                 }
-                .help("Ersetzt die Plätze durch alle gerade sichtbaren Fenster. Tipp: erst anwenden, von Hand zurechtrücken, dann übernehmen.")
+                .help("Replaces the slots with all currently visible windows. Tip: apply the preset, adjust windows by hand, then click this.")
 
                 Spacer()
-                Text(useGrid ? "Ziehen · Ecke skaliert" : "Ziehen · Ecke skaliert · ⌥ = ohne Magnet")
+                Text(useGrid ? "Drag · corner resizes" : "Drag · corner resizes · ⌥ = no snapping")
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                Toggle("Raster", isOn: $useGrid)
+                Toggle("Grid", isOn: $useGrid)
                     .toggleStyle(.switch)
                     .controlSize(.small)
-                    .help("Kacheln auf ¹⁄₂₄ einrasten (Halbe, Drittel, Viertel …)")
+                    .help("Snap tiles to a ¹⁄₂₄ grid (halves, thirds, quarters …)")
             }
 
             if let i = preset.slots.firstIndex(where: { $0.id == selection }) {
@@ -63,13 +63,14 @@ struct PresetEditor: View {
                 }
                 .id(preset.slots[i].id)
             } else {
-                Text(preset.slots.isEmpty ? "Noch keine Fenster – oben „Fenster hinzufügen“."
-                                          : "Kachel anklicken, um App, Position und Verhalten einzustellen.")
+                Text(preset.slots.isEmpty ? "No windows yet – use “Add Window” above."
+                                          : "Click a tile to set its app, position and behavior.")
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, minHeight: 80)
             }
         }
         .padding()
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
     }
 
     private var header: some View {
@@ -89,14 +90,14 @@ struct PresetEditor: View {
             Button {
                 Task { await engine.apply(preset) }
             } label: {
-                Label("Anwenden", systemImage: "play.fill")
+                Label("Apply", systemImage: "play.fill")
             }
             .keyboardShortcut(.return, modifiers: .command)
             .buttonStyle(.borderedProminent)
         }
     }
 
-    /// Automatisch anwenden, wenn genau diese Bildschirme verbunden werden.
+    /// Apply automatically when exactly these displays are connected.
     private var autoMenu: some View {
         let current = Screens.signature
         let isCurrent = preset.autoScreens == current
@@ -105,24 +106,24 @@ struct PresetEditor: View {
                 preset.autoScreens = isCurrent ? nil : current
             } label: {
                 if isCurrent {
-                    Label("Bei „\(Screens.describe(current))“ automatisch", systemImage: "checkmark")
+                    Label("Automatically on “\(Screens.describe(current))”", systemImage: "checkmark")
                 } else {
-                    Text("Automatisch bei „\(Screens.describe(current))“")
+                    Text("Apply automatically on “\(Screens.describe(current))”")
                 }
             }
             if let auto = preset.autoScreens, auto != current {
-                Button("Automatik für „\(Screens.describe(auto))“ entfernen") { preset.autoScreens = nil }
+                Button("Remove automation for “\(Screens.describe(auto))”") { preset.autoScreens = nil }
             }
         } label: {
-            Label(preset.autoScreens == nil ? "Manuell" : "Automatisch",
+            Label(preset.autoScreens == nil ? "Manual" : "Automatic",
                   systemImage: preset.autoScreens == nil ? "display" : "display.and.arrow.down")
         }
         .fixedSize()
-        .help("Preset automatisch anwenden, sobald diese Bildschirm-Kombination angeschlossen wird")
+        .help("Apply this preset automatically when this display combination is connected")
     }
 
     private func addSlot(_ app: AppCatalog.Entry) {
-        // Neue Kachel in die rechte Hälfte, wenn die linke schon belegt ist
+        // Put a new tile on the right half if the left one is taken
         let leftTaken = preset.slots.contains { $0.frame == .leftHalf }
         let slot = Slot(bundleID: app.bundleID, appName: app.name,
                         screen: screenRef, frame: leftTaken ? .rightHalf : .leftHalf)
@@ -134,7 +135,7 @@ struct PresetEditor: View {
         let captured = engine.capture(name: preset.name, windows: engine.capturableWindows()).slots
         preset.slots = captured.map { new in
             var s = new
-            // Einstellungen zum Neu-Öffnen vom bisherigen Platz derselben App übernehmen
+            // Keep the launch settings from the previous slot of the same app
             if let old = preset.slots.first(where: { $0.bundleID == s.bundleID && $0.match.index == s.match.index }) {
                 s.launch = old.launch
                 s.match.title = old.match.title ?? s.match.title

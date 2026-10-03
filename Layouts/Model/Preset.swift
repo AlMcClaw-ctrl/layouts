@@ -1,16 +1,16 @@
 import Foundation
 
-/// Ein gespeichertes Layout: welche App-Fenster wo liegen sollen.
+/// A saved layout: which app windows go where.
 struct Preset: Codable, Identifiable, Hashable {
-    /// Was mit Fenstern passiert, die nicht zum Preset gehören.
+    /// What happens to windows that are not part of the preset.
     enum Others: String, Codable, CaseIterable {
         case minimize, hide, keep
 
         var label: String {
             switch self {
-            case .minimize: "Andere minimieren"
-            case .hide: "Andere Apps ausblenden"
-            case .keep: "Andere offen lassen"
+            case .minimize: "Minimize others"
+            case .hide: "Hide other apps"
+            case .keep: "Leave others open"
             }
         }
     }
@@ -18,7 +18,7 @@ struct Preset: Codable, Identifiable, Hashable {
     var id = UUID()
     var name: String
     var others = Others.minimize
-    /// Automatisch anwenden, sobald genau diese Bildschirme verbunden sind (sortierte Display-UUIDs).
+    /// Apply automatically when exactly these displays are connected (sorted display UUIDs).
     var autoScreens: [String]?
     var slots: [Slot] = []
 
@@ -28,7 +28,7 @@ struct Preset: Codable, Identifiable, Hashable {
         self.slots = slots
     }
 
-    // Tolerant dekodieren, damit presets.json von Hand editierbar bleibt.
+    // Decode leniently so presets.json stays hand-editable.
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         id = try c.decodeIfPresent(UUID.self, forKey: .id) ?? UUID()
@@ -39,18 +39,18 @@ struct Preset: Codable, Identifiable, Hashable {
     }
 }
 
-/// Ein Fensterplatz innerhalb eines Presets.
+/// One window slot within a preset.
 struct Slot: Codable, Identifiable, Hashable {
     var id = UUID()
     var bundleID: String
     var appName: String?
-    /// Welches Fenster der App gemeint ist.
+    /// Which window of the app is meant.
     var match = WindowMatch()
-    /// "main" = Hauptbildschirm, sonst Display-UUID oder Bildschirmname.
+    /// "main" = primary display, otherwise display UUID or display name.
     var screen = "main"
-    /// Relativ (0…1) zum sichtbaren Bereich des Bildschirms, Ursprung oben links.
+    /// Relative (0…1) to the display's visible area, origin top left.
     var frame: UnitRect
-    /// Wie ein fehlendes Fenster geöffnet wird.
+    /// How a missing window is opened.
     var launch: LaunchSpec?
 
     init(bundleID: String, appName: String? = nil, match: WindowMatch = WindowMatch(),
@@ -75,7 +75,7 @@ struct Slot: Codable, Identifiable, Hashable {
     }
 }
 
-/// Bevorzugtes Fenster. Ohne Treffer wird ein beliebiges freies Fenster der App genommen.
+/// Preferred window. Without a match, any free window of the app is used.
 struct WindowMatch: Codable, Hashable {
     var title: String?
     var index: Int?
@@ -90,7 +90,7 @@ struct UnitRect: Codable, Hashable {
 
     var maxX: Double { x + w }
 
-    /// Gleiche Oberkante/Höhe wie `ref`, füllt die größere freie Seite daneben.
+    /// Same top/height as `ref`, fills the larger free side next to it.
     func fillingBeside(_ ref: UnitRect) -> UnitRect {
         let left = ref.x, right = 1 - ref.maxX
         return right >= left
@@ -98,7 +98,7 @@ struct UnitRect: Codable, Hashable {
             : UnitRect(x: 0, y: ref.y, w: left, h: ref.h)
     }
 
-    /// Gleiche Größe wie `ref`, direkt daneben (rechts, sonst links, notfalls am Rand).
+    /// Same size as `ref`, right next to it (right, else left, else at the edge).
     func sameSizeBeside(_ ref: UnitRect) -> UnitRect {
         let x = ref.maxX + ref.w <= 1.0001 ? ref.maxX
               : ref.x - ref.w >= -0.0001 ? ref.x - ref.w
@@ -106,7 +106,7 @@ struct UnitRect: Codable, Hashable {
         return UnitRect(x: max(0, x), y: ref.y, w: ref.w, h: ref.h)
     }
 
-    /// Nur Oberkante und Höhe übernehmen.
+    /// Take only top and height.
     func sameRow(_ ref: UnitRect) -> UnitRect {
         UnitRect(x: x, y: ref.y, w: w, h: ref.h)
     }
@@ -130,7 +130,7 @@ extension Preset {
             Slot(bundleID: chrome, appName: "Chrome", frame: .leftHalf),
             Slot(bundleID: claude, appName: "Claude", frame: .rightHalf),
         ]),
-        Preset(name: "Doppel-Claude", slots: [
+        Preset(name: "Two Claudes", slots: [
             Slot(bundleID: claude, appName: "Claude", match: WindowMatch(index: 0), frame: .leftHalf),
             Slot(bundleID: claude, appName: "Claude", match: WindowMatch(index: 1), frame: .rightHalf),
         ]),

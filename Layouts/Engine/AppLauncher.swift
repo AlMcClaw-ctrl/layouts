@@ -1,6 +1,6 @@
 import AppKit
 
-/// Startet Apps und öffnet neue Fenster.
+/// Launches apps and opens new windows.
 @MainActor
 enum AppLauncher {
     static let newWindowTitles: Set<String> = ["New Window", "Neues Fenster"]
@@ -9,7 +9,7 @@ enum AppLauncher {
         NSRunningApplication.runningApplications(withBundleIdentifier: bundleID).first { !$0.isTerminated }
     }
 
-    /// Läuft die App nicht, wird sie gestartet und kurz auf ihr erstes Fenster gewartet.
+    /// If the app isn't running, launch it and briefly wait for its first window.
     static func ensureRunning(_ bundleID: String) async -> NSRunningApplication? {
         if let app = running(bundleID) { return app }
         guard let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundleID) else { return nil }
@@ -23,7 +23,7 @@ enum AppLauncher {
         return app
     }
 
-    /// Öffnet ein neues Fenster und gibt es zurück, sobald es auftaucht.
+    /// Opens a new window and returns it once it appears.
     static func openWindow(for slot: Slot, app: NSRunningApplication) async -> AXUIElement? {
         let before = WindowInspector.windows(of: app).map(\.element)
         let spec = slot.launch ?? LaunchSpec(kind: .newWindow)
@@ -39,7 +39,7 @@ enum AppLauncher {
             guard let s = spec.url, let url = URL(string: s), let appURL = app.bundleURL else { return nil }
             let cfg = NSWorkspace.OpenConfiguration()
             if isChromium(slot.bundleID) {
-                // Chromium leitet die Argumente an die laufende Instanz weiter → echtes neues Fenster.
+                // Chromium forwards the arguments to the running instance → a real new window.
                 cfg.createsNewApplicationInstance = true
                 cfg.arguments = ["--new-window", s]
                 _ = try? await NSWorkspace.shared.openApplication(at: appURL, configuration: cfg)
@@ -89,6 +89,6 @@ enum AppLauncher {
         let source = "tell application \"Terminal\" to do script \"\(shell)\""
         var err: NSDictionary?
         NSAppleScript(source: source)?.executeAndReturnError(&err)
-        if let err { NSLog("Layouts: Terminal-AppleScript fehlgeschlagen: \(err)") }
+        if let err { NSLog("Layouts: Terminal AppleScript failed: \(err)") }
     }
 }

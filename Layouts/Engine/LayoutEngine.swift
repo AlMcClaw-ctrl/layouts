@@ -7,12 +7,12 @@ final class LayoutEngine {
     var status = ""
     var isRunning = false
 
-    // MARK: Anwenden
+    // MARK: Apply
 
     func apply(_ preset: Preset) async {
         guard AXPermission.isTrusted else {
             AXPermission.request()
-            status = "Bitte Bedienungshilfen erlauben"
+            status = "Please grant Accessibility access"
             return
         }
         guard !isRunning else { return }
@@ -21,17 +21,17 @@ final class LayoutEngine {
 
         var problems: [String] = []
 
-        // 1. Alle beteiligten Apps sicherstellen
+        // 1. Make sure all involved apps are running
         var apps: [String: NSRunningApplication] = [:]
         for id in preset.slots.map(\.bundleID).uniqued() {
             if let app = await AppLauncher.ensureRunning(id) {
                 apps[id] = app
             } else {
-                problems.append("\(id) nicht gefunden")
+                problems.append("\(id) not found")
             }
         }
 
-        // 2. Fenster zuordnen: erst Titel-Treffer, dann Index/freie Fenster, dann neue Fenster
+        // 2. Assign windows: title matches first, then index/free windows, then new windows
         var used: [AXUIElement] = []
         var assigned: [UUID: WindowInfo] = [:]
         func take(_ slot: Slot, _ w: WindowInfo) { assigned[slot.id] = w; used.append(w.element) }
@@ -61,16 +61,16 @@ final class LayoutEngine {
                let w = WindowInspector.windows(of: app).first(where: { CFEqual($0.element, el) }) {
                 take(slot, w)
             } else {
-                problems.append("kein neues Fenster für \(slot.appName ?? slot.bundleID)")
+                problems.append("no new window for \(slot.appName ?? slot.bundleID)")
             }
         }
 
-        // 3. Positionieren (Electron-Apps melden kurz falsche Größen → nach kurzer Pause nochmal)
+        // 3. Position (Electron apps briefly report wrong sizes → repeat after a short pause)
         place(preset, assigned)
         try? await Task.sleep(for: .milliseconds(300))
         place(preset, assigned)
 
-        // 4. Alles andere wegräumen
+        // 4. Clear everything else away
         switch preset.others {
         case .keep:
             break
@@ -87,7 +87,7 @@ final class LayoutEngine {
             }
         }
 
-        // 5. In Slot-Reihenfolge nach vorn holen
+        // 5. Raise in slot order
         for slot in preset.slots {
             guard let w = assigned[slot.id] else { continue }
             if w.app.isHidden { w.app.unhide() }
@@ -96,7 +96,7 @@ final class LayoutEngine {
             AX.perform(w.element, "AXRaise")
         }
 
-        status = problems.isEmpty ? "„\(preset.name)“ angewendet" : "„\(preset.name)“: " + problems.joined(separator: ", ")
+        status = problems.isEmpty ? "Applied “\(preset.name)”" : "“\(preset.name)”: " + problems.joined(separator: ", ")
     }
 
     private func place(_ preset: Preset, _ assigned: [UUID: WindowInfo]) {
@@ -107,16 +107,16 @@ final class LayoutEngine {
         }
     }
 
-    // MARK: Speichern
+    // MARK: Capture
 
-    /// Baut ein Preset aus den übergebenen (aktuell sichtbaren) Fenstern.
+    /// Builds a preset from the given (currently visible) windows.
     func capture(name: String, windows: [WindowInfo]) -> Preset {
         var perApp: [String: Int] = [:]
         let slots = windows.map { w -> Slot in
             let screen = Screens.screen(for: w.frame) ?? Screens.primary!
             let index = perApp[w.bundleID, default: 0]
             perApp[w.bundleID] = index + 1
-            // Titel nur bei Terminal merken – den setzen wir selbst, andere Apps ändern ihn ständig.
+            // Only remember titles for Terminal – we set those ourselves, other apps change them constantly.
             let isTerminal = w.bundleID == "com.apple.Terminal"
             return Slot(bundleID: w.bundleID, appName: w.appName,
                         match: WindowMatch(title: isTerminal && !w.title.isEmpty ? w.title : nil, index: index),
@@ -126,7 +126,7 @@ final class LayoutEngine {
         return Preset(name: name, slots: slots)
     }
 
-    /// Alle Fenster, die sich für ein Preset eignen (sichtbar, nicht minimiert, kein Vollbild).
+    /// All windows suitable for a preset (visible, not minimized, not full screen).
     func capturableWindows() -> [WindowInfo] {
         WindowInspector.regularApps()
             .filter { !$0.isHidden }

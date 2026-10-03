@@ -1,8 +1,8 @@
 import SwiftUI
 
-/// Maßstabsgetreue Vorschau eines Bildschirms; Fenster-Kacheln lassen sich ziehen und skalieren.
+/// To-scale preview of a display; window tiles can be dragged and resized.
 struct LayoutCanvas: View {
-    /// Feste Bezugsfläche für alle Drag-Gesten – nicht die Kachel selbst, die sich ja bewegt.
+    /// Fixed reference space for all drag gestures – not the tile itself, which moves.
     static let space = "layoutCanvas"
 
     @Binding var slots: [Slot]
@@ -61,19 +61,19 @@ private struct SlotTile: View {
     @Binding var slot: Slot
     let canvas: CGSize
     let isSelected: Bool
-    /// Rahmen der anderen Kacheln – deren Kanten wirken magnetisch.
+    /// Frames of the other tiles – their edges are magnetic.
     let neighbours: [UnitRect]
-    /// Raster 1/24 statt freiem Ziehen.
+    /// 1/24 grid instead of free dragging.
     let useGrid: Bool
     let select: () -> Void
 
     private enum Drag { case move, resize }
 
-    /// Raster 1/24 – damit landen ½, ⅓, ¼, ⅙ … exakt.
+    /// 1/24 grid – so ½, ⅓, ¼, ⅙ … land exactly.
     private static let grid = 24.0
-    /// Magnet-Reichweite in Punkten auf der Vorschau.
+    /// Snap distance in points on the preview.
     private static let magnet = 6.0
-    /// Roher Rahmen während des Ziehens.
+    /// Raw frame while dragging.
     @State private var live: UnitRect?
     @State private var drag = Drag.move
 
@@ -82,7 +82,7 @@ private struct SlotTile: View {
         let color = AppCatalog.color(slot.bundleID)
 
         ZStack(alignment: .topLeading) {
-            // Zielposition nach dem Loslassen
+            // Target position after release
             if let live {
                 let target = snapped(live)
                 RoundedRectangle(cornerRadius: 8)
@@ -126,7 +126,7 @@ private struct SlotTile: View {
                     .padding(4)
                     .contentShape(Rectangle())
                     .highPriorityGesture(resize)
-                    .help("Größe ändern")
+                    .help("Resize")
             }
             .contentShape(Rectangle())
             .gesture(move)
@@ -179,14 +179,14 @@ private struct SlotTile: View {
         return UnitRect(x: clamp(s(u.x), 0, 1 - w), y: clamp(s(u.y), 0, 1 - h), w: w, h: h)
     }
 
-    /// Frei, aber Kanten haften kurz an Bildschirmrand und Nachbar-Kanten. ⌥ gedrückt = ganz frei.
+    /// Free, but edges stick to the screen border and neighbouring edges. Hold ⌥ for no snapping.
     private func magnetSnapped(_ u: UnitRect) -> UnitRect {
         guard !NSEvent.modifierFlags.contains(.option) else { return u }
         let xs: [Double] = [0, 1] + neighbours.flatMap { [$0.x, $0.maxX] }
         let ys: [Double] = [0, 1] + neighbours.flatMap { [$0.y, $0.y + $0.h] }
         let tx = Self.magnet / max(canvas.width, 1), ty = Self.magnet / max(canvas.height, 1)
 
-        /// Kleinste Verschiebung, mit der eine der Kanten auf ein Ziel trifft.
+        /// Smallest shift that puts one of the edges onto a target.
         func pull(_ edges: [Double], _ targets: [Double], _ t: Double) -> Double {
             var best: Double?
             for e in edges {

@@ -1,23 +1,23 @@
 import SwiftUI
 
-/// Details eines Fensterplatzes: App, Position, welches Fenster, wie neu öffnen.
+/// Details of one slot: app, position, which window, how to open it.
 struct SlotInspector: View {
     @Binding var slot: Slot
-    /// Die übrigen Plätze im Preset (zum Angleichen).
+    /// The other slots in the preset (for aligning).
     let others: [Slot]
     let onDelete: () -> Void
 
     private static let positions: [(String, String, UnitRect)] = [
-        ("Linke Hälfte", "rectangle.lefthalf.filled", .leftHalf),
-        ("Rechte Hälfte", "rectangle.righthalf.filled", .rightHalf),
-        ("Linkes Drittel", "rectangle.split.3x1", UnitRect(x: 0, y: 0, w: 1.0 / 3, h: 1)),
-        ("Mittleres Drittel", "rectangle.split.3x1", UnitRect(x: 1.0 / 3, y: 0, w: 1.0 / 3, h: 1)),
-        ("Rechtes Drittel", "rectangle.split.3x1", UnitRect(x: 2.0 / 3, y: 0, w: 1.0 / 3, h: 1)),
-        ("Linke zwei Drittel", "rectangle.leadinghalf.inset.filled", UnitRect(x: 0, y: 0, w: 2.0 / 3, h: 1)),
-        ("Rechte zwei Drittel", "rectangle.trailinghalf.inset.filled", UnitRect(x: 1.0 / 3, y: 0, w: 2.0 / 3, h: 1)),
-        ("Obere Hälfte", "rectangle.tophalf.filled", UnitRect(x: 0, y: 0, w: 1, h: 0.5)),
-        ("Untere Hälfte", "rectangle.bottomhalf.filled", UnitRect(x: 0, y: 0.5, w: 1, h: 0.5)),
-        ("Vollbild", "rectangle.fill", .full),
+        ("Left half", "rectangle.lefthalf.filled", .leftHalf),
+        ("Right half", "rectangle.righthalf.filled", .rightHalf),
+        ("Left third", "rectangle.split.3x1", UnitRect(x: 0, y: 0, w: 1.0 / 3, h: 1)),
+        ("Center third", "rectangle.split.3x1", UnitRect(x: 1.0 / 3, y: 0, w: 1.0 / 3, h: 1)),
+        ("Right third", "rectangle.split.3x1", UnitRect(x: 2.0 / 3, y: 0, w: 1.0 / 3, h: 1)),
+        ("Left two thirds", "rectangle.leadinghalf.inset.filled", UnitRect(x: 0, y: 0, w: 2.0 / 3, h: 1)),
+        ("Right two thirds", "rectangle.trailinghalf.inset.filled", UnitRect(x: 1.0 / 3, y: 0, w: 2.0 / 3, h: 1)),
+        ("Top half", "rectangle.tophalf.filled", UnitRect(x: 0, y: 0, w: 1, h: 0.5)),
+        ("Bottom half", "rectangle.bottomhalf.filled", UnitRect(x: 0, y: 0.5, w: 1, h: 0.5)),
+        ("Full screen", "rectangle.fill", .full),
     ]
 
     var body: some View {
@@ -33,7 +33,7 @@ struct SlotInspector: View {
                         .tag(app.bundleID)
                     }
                 }
-                Picker("Bildschirm", selection: $slot.screen) {
+                Picker("Display", selection: $slot.screen) {
                     ForEach(screenChoices, id: \.ref) { Text($0.name).tag($0.ref) }
                 }
                 LabeledContent("Position") {
@@ -47,18 +47,18 @@ struct SlotInspector: View {
                     }
                 }
                 if !others.isEmpty {
-                    LabeledContent("An Fenster angleichen") {
+                    LabeledContent("Align to window") {
                         HStack {
                             if others.count == 1, let ref = others.first {
-                                Button("Restfläche neben \(name(ref)) füllen") { align { $0.fillingBeside(ref.frame) } }
+                                Button("Fill space next to \(name(ref))") { align { $0.fillingBeside(ref.frame) } }
                                     .buttonStyle(.borderedProminent)
                             }
-                            Menu(others.count == 1 ? "Mehr" : "Angleichen an …") {
+                            Menu(others.count == 1 ? "More" : "Align to …") {
                                 ForEach(others) { ref in
                                     Section(name(ref)) {
-                                        Button("Restfläche daneben füllen") { align { $0.fillingBeside(ref.frame) } }
-                                        Button("Gleiche Größe, daneben") { align { $0.sameSizeBeside(ref.frame) } }
-                                        Button("Gleiche Höhe und Oberkante") { align { $0.sameRow(ref.frame) } }
+                                        Button("Fill remaining space beside it") { align { $0.fillingBeside(ref.frame) } }
+                                        Button("Same size, side by side") { align { $0.sameSizeBeside(ref.frame) } }
+                                        Button("Same top and height") { align { $0.sameRow(ref.frame) } }
                                     }
                                 }
                             }
@@ -68,18 +68,18 @@ struct SlotInspector: View {
                 }
             }
 
-            Section("Welches Fenster") {
+            Section("Which window") {
                 Stepper(value: index, in: 0...9) {
-                    LabeledContent("Fenster Nr.", value: slot.match.index.map { "\($0 + 1)" } ?? "beliebig")
+                    LabeledContent("Window #", value: slot.match.index.map { "\($0 + 1)" } ?? "any")
                 }
-                TextField("Titel enthält (optional)", text: text(\.match.title))
+                TextField("Title contains (optional)", text: text(\.match.title))
             }
 
-            Section("Wenn das Fenster fehlt") {
-                Picker("Öffnen per", selection: launchKind) {
-                    Text("Neues Fenster (Menü / ⌘N)").tag(LaunchSpec.Kind.newWindow)
+            Section("If the window is missing") {
+                Picker("Open via", selection: launchKind) {
+                    Text("New window (menu / ⌘N)").tag(LaunchSpec.Kind.newWindow)
                     Text("URL").tag(LaunchSpec.Kind.url)
-                    Text("Terminal mit Befehl").tag(LaunchSpec.Kind.terminal)
+                    Text("Terminal with command").tag(LaunchSpec.Kind.terminal)
                 }
                 switch slot.launch?.kind ?? .newWindow {
                 case .newWindow:
@@ -87,13 +87,13 @@ struct SlotInspector: View {
                 case .url:
                     TextField("https://…", text: launchText(\.url))
                 case .terminal:
-                    TextField("Ordner, z. B. ~/Projects/foo", text: launchText(\.cwd))
-                    TextField("Befehl, z. B. claude", text: launchText(\.command))
+                    TextField("Folder, e.g. ~/Projects/foo", text: launchText(\.cwd))
+                    TextField("Command, e.g. claude", text: launchText(\.command))
                 }
             }
 
             Section {
-                Button("Platz entfernen", role: .destructive, action: onDelete)
+                Button("Remove Slot", role: .destructive, action: onDelete)
             }
         }
         .formStyle(.grouped)
@@ -129,9 +129,9 @@ struct SlotInspector: View {
 
     private var screenChoices: [(ref: String, name: String)] {
         var list = NSScreen.screens.map { s in
-            (ref: Screens.ref(for: s), name: s == Screens.primary ? "Hauptbildschirm (\(s.localizedName))" : s.localizedName)
+            (ref: Screens.ref(for: s), name: s == Screens.primary ? "Main display (\(s.localizedName))" : s.localizedName)
         }
-        if !list.contains(where: { $0.ref == slot.screen }) { list.append((ref: slot.screen, name: "\(slot.screen) (nicht verbunden)")) }
+        if !list.contains(where: { $0.ref == slot.screen }) { list.append((ref: slot.screen, name: "\(slot.screen) (not connected)")) }
         return list
     }
 

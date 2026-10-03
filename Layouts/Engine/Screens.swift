@@ -1,7 +1,7 @@
 import AppKit
 
-/// Bildschirme auflösen und zwischen AppKit- und AX-Koordinaten umrechnen.
-/// AppKit: Ursprung unten links. AX: Ursprung oben links. Bezug ist jeweils der Hauptbildschirm.
+/// Resolves displays and converts between AppKit and AX coordinates.
+/// AppKit: origin bottom left. AX: origin top left. Both relative to the primary display.
 @MainActor
 enum Screens {
     static var primary: NSScreen? { NSScreen.screens.first }
@@ -11,7 +11,7 @@ enum Screens {
         return CGRect(x: r.minX, y: h - r.maxY, width: r.width, height: r.height)
     }
 
-    /// Sichtbarer Bereich (ohne Menüleiste/Dock) in AX-Koordinaten.
+    /// Visible area (without menu bar/Dock) in AX coordinates.
     static func visibleAX(_ screen: NSScreen) -> CGRect { toAX(screen.visibleFrame) }
 
     static func uuid(_ screen: NSScreen) -> String? {
@@ -20,12 +20,12 @@ enum Screens {
         return CFUUIDCreateString(nil, cf) as String
     }
 
-    /// Kennung der aktuellen Bildschirm-Kombination.
+    /// Identifier of the current display combination.
     static var signature: [String] { NSScreen.screens.compactMap(uuid).sorted() }
 
     static func describe(_ signature: [String]) -> String {
-        let names = signature.map { id in NSScreen.screens.first { uuid($0) == id }?.localizedName ?? "nicht verbunden" }
-        return names.count == 1 ? names[0] : "\(names.count) Bildschirme: " + names.joined(separator: " + ")
+        let names = signature.map { id in NSScreen.screens.first { uuid($0) == id }?.localizedName ?? "not connected" }
+        return names.count == 1 ? names[0] : "\(names.count) displays: " + names.joined(separator: " + ")
     }
 
     static func resolve(_ ref: String) -> NSScreen? {
@@ -39,7 +39,7 @@ enum Screens {
         screen == primary ? "main" : (uuid(screen) ?? screen.localizedName)
     }
 
-    /// Bildschirm mit der größten Überlappung zu einem AX-Rahmen.
+    /// Display with the largest overlap with an AX frame.
     static func screen(for axRect: CGRect) -> NSScreen? {
         NSScreen.screens.max { a, b in
             area(visibleAX(a).intersection(axRect)) < area(visibleAX(b).intersection(axRect))

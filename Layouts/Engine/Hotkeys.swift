@@ -1,7 +1,7 @@
 import Foundation
 import KeyboardShortcuts
 
-/// Globale Hotkeys pro Preset. Die ersten neun bekommen einmalig ⌃⌥1…9 als Vorgabe.
+/// Global hotkeys per preset. The first nine get ⌃⌥1…9 once as a default.
 @MainActor
 enum Hotkeys {
     private static let keys: [KeyboardShortcuts.Key] = [.one, .two, .three, .four, .five, .six, .seven, .eight, .nine]

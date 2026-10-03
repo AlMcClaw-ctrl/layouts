@@ -5,3 +5,5 @@ xcuserdata/
 .DS_Store
 Config/Local.xcconfig
 PLAN-LayoutPresets.md
+build-dist/
+dist/

@@ -8,12 +8,12 @@ struct MenuView: View {
 
     var body: some View {
         if !AXPermission.isTrusted {
-            Button("⚠️ Bedienungshilfen erlauben…") { AXPermission.request() }
+            Button("⚠️ Grant Accessibility Access…") { AXPermission.request() }
             Divider()
         }
 
         if store.presets.isEmpty {
-            Text("Noch keine Presets")
+            Text("No presets yet")
         }
         ForEach(store.presets) { preset in
             Button(preset.name) { Task { await engine.apply(preset) } }
@@ -21,11 +21,11 @@ struct MenuView: View {
         }
 
         Divider()
-        Button("Aktuelles Layout speichern…") {
+        Button("Save Current Layout…") {
             NSApp.activate()
             openWindow(id: "capture")
         }
-        SettingsLink { Text("Einstellungen…") }
+        SettingsLink { Text("Settings…") }
             .keyboardShortcut(",")
 
         if !engine.status.isEmpty {
@@ -37,7 +37,7 @@ struct MenuView: View {
         }
 
         Divider()
-        Button("Beenden") { NSApplication.shared.terminate(nil) }
+        Button("Quit Layouts") { NSApplication.shared.terminate(nil) }
             .keyboardShortcut("q")
     }
 }

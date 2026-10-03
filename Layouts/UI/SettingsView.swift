@@ -9,7 +9,7 @@ struct SettingsView: View {
             PresetsTab()
                 .tabItem { Label("Presets", systemImage: "rectangle.split.2x1") }
             GeneralTab()
-                .tabItem { Label("Allgemein", systemImage: "gearshape") }
+                .tabItem { Label("General", systemImage: "gearshape") }
         }
         .frame(minWidth: 980, idealWidth: 1080, minHeight: 720, idealHeight: 820)
         .background(WindowLevel(floating: floating))
@@ -28,7 +28,7 @@ private struct PresetsTab: View {
                 List(selection: $selected) {
                     ForEach(store.presets) { preset in
                         VStack(alignment: .leading, spacing: 2) {
-                            Text(preset.name.isEmpty ? "Ohne Namen" : preset.name)
+                            Text(preset.name.isEmpty ? "Untitled" : preset.name)
                             Text(preset.slots.map { $0.appName ?? $0.bundleID }.joined(separator: " · "))
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
@@ -44,7 +44,7 @@ private struct PresetsTab: View {
                         .disabled(selected == nil)
                     Button { duplicate() } label: { Image(systemName: "plus.square.on.square").frame(width: 24, height: 20) }
                         .disabled(selected == nil)
-                        .help("Duplizieren")
+                        .help("Duplicate")
                     Spacer()
                 }
                 .buttonStyle(.borderless)
@@ -58,7 +58,7 @@ private struct PresetsTab: View {
                 PresetEditor(preset: $store.presets[i])
                     .id(store.presets[i].id)
             } else {
-                Text("Preset links auswählen")
+                Text("Select a preset on the left")
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
@@ -67,7 +67,7 @@ private struct PresetsTab: View {
     }
 
     private func add() {
-        let p = Preset(name: "Neues Layout", slots: [])
+        let p = Preset(name: "New Layout", slots: [])
         store.presets.append(p)
         selected = p.id
     }
@@ -80,7 +80,7 @@ private struct PresetsTab: View {
 
     private func duplicate() {
         guard let p = store.presets.first(where: { $0.id == selected }) else { return }
-        var copy = Preset(name: p.name + " Kopie", others: p.others, slots: p.slots)
+        var copy = Preset(name: p.name + " Copy", others: p.others, slots: p.slots)
         copy.slots = copy.slots.map { var s = $0; s.id = UUID(); return s }
         store.presets.append(copy)
         selected = copy.id
@@ -95,8 +95,8 @@ private struct GeneralTab: View {
     var body: some View {
         Form {
             Section {
-                Toggle("Einstellungsfenster immer im Vordergrund", isOn: $floating)
-                Toggle("Beim Anmelden starten", isOn: $launchAtLogin)
+                Toggle("Keep settings window on top", isOn: $floating)
+                Toggle("Launch at login", isOn: $launchAtLogin)
                     .onChange(of: launchAtLogin) { _, on in
                         do {
                             if on { try SMAppService.mainApp.register() } else { try SMAppService.mainApp.unregister() }
@@ -104,27 +104,27 @@ private struct GeneralTab: View {
                             launchAtLogin = SMAppService.mainApp.status == .enabled
                         }
                     }
-                LabeledContent("Bedienungshilfen") {
+                LabeledContent("Accessibility") {
                     if AXPermission.isTrusted {
-                        Text("erlaubt ✓")
+                        Text("Granted ✓")
                     } else {
-                        Button("Erlauben…") { AXPermission.request() }
+                        Button("Grant Access…") { AXPermission.request() }
                     }
                 }
             }
-            Section("Datei") {
+            Section("File") {
                 HStack {
-                    Button("presets.json bearbeiten") { NSWorkspace.shared.open(store.url) }
-                    Button("Im Finder zeigen") { NSWorkspace.shared.activateFileViewerSelecting([store.url]) }
-                    Button("Neu laden") { store.load() }
+                    Button("Edit presets.json") { NSWorkspace.shared.open(store.url) }
+                    Button("Show in Finder") { NSWorkspace.shared.activateFileViewerSelecting([store.url]) }
+                    Button("Reload") { store.load() }
                 }
                 if let error = store.lastError {
                     Text(error).foregroundStyle(.red)
                 }
             }
-            Section("Automatisieren") {
-                LabeledContent("Preset anwenden", value: "layouts://apply?name=Coding")
-                LabeledContent("Layout speichern", value: "layouts://capture?name=Neu")
+            Section("Automation") {
+                LabeledContent("Apply preset", value: "layouts://apply?name=Coding")
+                LabeledContent("Save layout", value: "layouts://capture?name=New")
             }
             .textSelection(.enabled)
         }

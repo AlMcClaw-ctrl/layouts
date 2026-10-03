@@ -26,12 +26,24 @@ A tiny native macOS menu bar app. Arrange your windows once (say Chrome on the l
 
 ## Requirements
 
-- The UI is currently in **German** (English localization welcome as a PR).
 
 - macOS 14 Sonoma or later
 - **Accessibility** permission, which is required to move other apps' windows. That is also why the app is not sandboxed and not in the App Store.
 
-## Build and install
+## Download
+
+1. Download **Layouts-x.y.z.zip** from the [latest release](https://github.com/AlMcClaw-ctrl/layouts/releases/latest), unzip it and move **Layouts.app** to `/Applications`.
+2. The app is **not notarized** (no paid Apple Developer account), so macOS blocks it on first launch. Either:
+   - open it once, then go to **System Settings → Privacy & Security** and click **Open Anyway**, or
+   - remove the quarantine flag in Terminal:
+     ```bash
+     xattr -dr com.apple.quarantine /Applications/Layouts.app
+     ```
+3. Grant access in **System Settings → Privacy & Security → Accessibility → Layouts**.
+
+Prefer to build it yourself? See below.
+
+## Build from source
 
 ```bash
 brew install xcodegen

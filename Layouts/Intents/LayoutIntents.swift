@@ -1,6 +1,6 @@
 import AppIntents
 
-/// Ein Preset, wie Kurzbefehle/Spotlight es sehen.
+/// A preset as Shortcuts/Spotlight see it.
 struct PresetEntity: AppEntity {
     static let typeDisplayRepresentation: TypeDisplayRepresentation = "Layout"
     static let defaultQuery = PresetQuery()
@@ -35,22 +35,22 @@ struct PresetQuery: EntityStringQuery {
 }
 
 struct ApplyLayoutIntent: AppIntent {
-    static let title: LocalizedStringResource = "Layout anwenden"
-    static let description = IntentDescription("Ordnet die Fenster nach einem gespeicherten Layout an.")
+    static let title: LocalizedStringResource = "Apply Layout"
+    static let description = IntentDescription("Arranges your windows according to a saved layout.")
     static let openAppWhenRun = false
 
     @Parameter(title: "Layout")
     var layout: PresetEntity
 
     static var parameterSummary: some ParameterSummary {
-        Summary("\(\.$layout) anwenden")
+        Summary("Apply \(\.$layout)")
     }
 
     @MainActor
     func perform() async throws -> some IntentResult & ProvidesDialog {
         let core = LayoutsCore.shared
         guard let preset = core.store.presets.first(where: { $0.id == layout.id }) else {
-            return .result(dialog: "Layout „\(layout.name)“ gibt es nicht mehr.")
+            return .result(dialog: "The layout “\(layout.name)” no longer exists.")
         }
         await core.engine.apply(preset)
         return .result(dialog: "\(core.engine.status)")
@@ -58,22 +58,22 @@ struct ApplyLayoutIntent: AppIntent {
 }
 
 struct SaveLayoutIntent: AppIntent {
-    static let title: LocalizedStringResource = "Aktuelles Layout speichern"
-    static let description = IntentDescription("Speichert alle sichtbaren Fenster als Layout. Gleichnamige Layouts werden überschrieben.")
+    static let title: LocalizedStringResource = "Save Current Layout"
+    static let description = IntentDescription("Saves all visible windows as a layout. A layout with the same name is replaced.")
     static let openAppWhenRun = false
 
     @Parameter(title: "Name")
     var name: String
 
     static var parameterSummary: some ParameterSummary {
-        Summary("Aktuelles Layout als \(\.$name) speichern")
+        Summary("Save current layout as \(\.$name)")
     }
 
     @MainActor
     func perform() async throws -> some IntentResult & ProvidesDialog {
         let core = LayoutsCore.shared
         core.store.upsert(core.engine.capture(name: name, windows: core.engine.capturableWindows()))
-        return .result(dialog: "„\(name)“ gespeichert")
+        return .result(dialog: "Saved “\(name)”")
     }
 }
 
@@ -82,17 +82,17 @@ struct LayoutsShortcuts: AppShortcutsProvider {
         AppShortcut(
             intent: ApplyLayoutIntent(),
             phrases: [
-                "\(\.$layout) in \(.applicationName) anwenden",
+                "Apply \(\.$layout) with \(.applicationName)",
                 "\(.applicationName) \(\.$layout)",
                 "Apply \(\.$layout) in \(.applicationName)",
             ],
-            shortTitle: "Layout anwenden",
+            shortTitle: "Apply Layout",
             systemImageName: "rectangle.split.2x1"
         )
         AppShortcut(
             intent: SaveLayoutIntent(),
-            phrases: ["Layout in \(.applicationName) speichern", "Save layout in \(.applicationName)"],
-            shortTitle: "Layout speichern",
+            phrases: ["Save layout in \(.applicationName)"],
+            shortTitle: "Save Layout",
             systemImageName: "camera.viewfinder"
         )
     }

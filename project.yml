@@ -20,9 +20,12 @@ targets:
       path: Layouts/Info.plist
       properties:
         CFBundleDisplayName: Layouts
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSHumanReadableCopyright: © 2026 AlMcClaw · MIT License
         LSUIElement: true
         LSApplicationCategoryType: public.app-category.productivity
-        NSAppleEventsUsageDescription: Layouts steuert Terminal, um Fenster mit Projektordner zu öffnen.
+        NSAppleEventsUsageDescription: Layouts controls Terminal to open windows in a project folder.
         CFBundleURLTypes:
           - CFBundleURLName: io.github.almcclaw.Layouts
             CFBundleURLSchemes: [layouts]

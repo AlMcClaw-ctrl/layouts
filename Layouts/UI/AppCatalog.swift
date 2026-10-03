@@ -1,7 +1,7 @@
 import AppKit
 import SwiftUI
 
-/// Namen, Icons und Farben für Apps im Editor.
+/// Names, icons and colors for apps in the editor.
 @MainActor
 enum AppCatalog {
     struct Entry: Hashable, Identifiable {
@@ -29,7 +29,7 @@ enum AppCatalog {
         return bundleID
     }
 
-    /// Laufende Apps mit Fenstern, alphabetisch.
+    /// Running regular apps, alphabetically.
     static func runningApps() -> [Entry] {
         WindowInspector.regularApps()
             .compactMap { app in app.bundleIdentifier.map { Entry(bundleID: $0, name: app.localizedName ?? $0) } }
@@ -37,7 +37,7 @@ enum AppCatalog {
             .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
     }
 
-    /// Stabile Farbe pro App (String.hashValue ist pro Start zufällig, darum djb2).
+    /// Stable color per app (String.hashValue is randomized per launch, hence djb2).
     static func color(_ bundleID: String) -> Color {
         let hash = bundleID.utf8.reduce(UInt32(5381)) { ($0 << 5) &+ $0 &+ UInt32($1) }
         return Color(hue: Double(hash % 360) / 360, saturation: 0.55, brightness: 0.85)

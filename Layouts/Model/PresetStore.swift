@@ -1,7 +1,7 @@
 import Foundation
 import Observation
 
-/// Lädt/speichert Presets als JSON in ~/Library/Application Support/Layouts/presets.json.
+/// Loads/saves presets as JSON in ~/Library/Application Support/Layouts/presets.json.
 @MainActor
 @Observable
 final class PresetStore {
@@ -35,7 +35,7 @@ final class PresetStore {
             presets = try JSONDecoder().decode(File.self, from: Data(contentsOf: url)).presets
             lastError = nil
         } catch {
-            lastError = "presets.json fehlerhaft: \(error.localizedDescription)"
+            lastError = "presets.json is invalid: \(error.localizedDescription)"
         }
     }
 
@@ -45,7 +45,7 @@ final class PresetStore {
         do {
             try enc.encode(File(presets: presets)).write(to: url, options: .atomic)
         } catch {
-            lastError = "Speichern fehlgeschlagen: \(error.localizedDescription)"
+            lastError = "Could not save: \(error.localizedDescription)"
         }
     }
 
@@ -53,7 +53,7 @@ final class PresetStore {
         presets.first { $0.name.localizedCaseInsensitiveCompare(name) == .orderedSame }
     }
 
-    /// Gleichnamiges Preset ersetzen (ID und Hotkey bleiben), sonst anhängen.
+    /// Replace a preset with the same name (ID and hotkey are kept), otherwise append.
     func upsert(_ p: Preset) {
         if let i = presets.firstIndex(where: { $0.name == p.name }) {
             var updated = p

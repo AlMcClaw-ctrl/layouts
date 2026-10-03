@@ -1,12 +1,12 @@
 import AppKit
 import ApplicationServices
 
-/// Dünne Hülle um die Accessibility-API.
+/// Thin wrapper around the Accessibility API.
 @MainActor
 enum AX {
     static func app(_ pid: pid_t) -> AXUIElement {
         let el = AXUIElementCreateApplication(pid)
-        AXUIElementSetMessagingTimeout(el, 1.0)  // hängende Apps blockieren uns nicht
+        AXUIElementSetMessagingTimeout(el, 1.0)  // hanging apps must not block us
         return el
     }
 
@@ -37,7 +37,7 @@ enum AX {
         AXUIElementPerformAction(el, action as CFString) == .success
     }
 
-    /// Fensterrahmen in AX-Koordinaten (Ursprung oben links am Hauptbildschirm).
+    /// Window frame in AX coordinates (origin top left of the primary display).
     static func frame(_ el: AXUIElement) -> CGRect? {
         guard let p = value(el, "AXPosition"), let s = value(el, "AXSize"),
               CFGetTypeID(p) == AXValueGetTypeID(), CFGetTypeID(s) == AXValueGetTypeID() else { return nil }
@@ -47,7 +47,7 @@ enum AX {
         return CGRect(origin: origin, size: size)
     }
 
-    /// Größe → Position → Größe: sonst begrenzt macOS die Größe am alten Bildschirmrand.
+    /// Size → position → size: otherwise macOS clamps the size at the old screen edge.
     static func setFrame(_ el: AXUIElement, _ r: CGRect) {
         var size = r.size, origin = r.origin
         guard let s = AXValueCreate(.cgSize, &size), let p = AXValueCreate(.cgPoint, &origin) else { return }
@@ -56,7 +56,7 @@ enum AX {
         set(el, "AXSize", s)
     }
 
-    /// Sucht einen Menüeintrag (z. B. „Neues Fenster“) in der Menüleiste der App.
+    /// Finds a menu item (e.g. “New Window”) in the app's menu bar.
     static func menuItem(pid: pid_t, titles: Set<String>) -> AXUIElement? {
         guard let bar = element(app(pid), "AXMenuBar") else { return nil }
         var queue: [(AXUIElement, Int)] = [(bar, 0)]

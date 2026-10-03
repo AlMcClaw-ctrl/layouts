@@ -12,7 +12,7 @@ struct WindowInfo {
     var appName: String { app.localizedName ?? bundleID }
 }
 
-/// Liest die Fenster laufender Apps (vorne → hinten je App).
+/// Reads the windows of running apps (front → back per app).
 @MainActor
 enum WindowInspector {
     static func windows(of app: NSRunningApplication) -> [WindowInfo] {
@@ -26,7 +26,7 @@ enum WindowInspector {
         }
     }
 
-    /// Fenster aller Instanzen einer App (z. B. Claude privat + Enterprise laufen parallel).
+    /// Windows of all instances of an app (e.g. two Claude instances with different accounts).
     static func windows(bundleID: String) -> [WindowInfo] {
         NSRunningApplication.runningApplications(withBundleIdentifier: bundleID)
             .filter { !$0.isTerminated }

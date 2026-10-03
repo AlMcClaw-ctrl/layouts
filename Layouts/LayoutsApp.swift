@@ -11,7 +11,7 @@ struct LayoutsApp: App {
                 .environment(delegate.engine)
         }
 
-        Window("Layout speichern", id: "capture") {
+        Window("Save Layout", id: "capture") {
             CaptureView()
                 .environment(delegate.store)
                 .environment(delegate.engine)
@@ -37,7 +37,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if !AXPermission.isTrusted { AXPermission.request() }
     }
 
-    /// layouts://apply?name=Coding · layouts://capture?name=Neu · layouts://settings · layouts://dump
+    /// layouts://apply?name=Coding · layouts://capture?name=New · layouts://settings · layouts://dump
     func application(_ application: NSApplication, open urls: [URL]) {
         for url in urls { Task { await handle(url) } }
     }
@@ -50,12 +50,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             if let name, let p = store.preset(named: name) {
                 await engine.apply(p)
             } else {
-                engine.status = "Preset „\(name ?? "")“ nicht gefunden"
+                engine.status = "Preset “\(name ?? "")” not found"
             }
         case "capture":
             guard let name, !name.isEmpty else { return }
             store.upsert(engine.capture(name: name, windows: engine.capturableWindows()))
-            engine.status = "„\(name)“ gespeichert"
+            engine.status = "Saved “\(name)”"
         case "settings":
             NSApp.activate()
             NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
@@ -67,7 +67,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         writeStatus()
     }
 
-    /// Debug: aktuelle Fenster + Status als JSON neben presets.json.
+    /// Debug: current windows + status as JSON next to presets.json.
     private func dumpWindows() {
         let rows = WindowInspector.allWindows().map { w -> [String: Any] in
             ["app": w.appName, "bundleID": w.bundleID, "title": w.title,
@@ -79,7 +79,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             let v = Screens.visibleAX(s)
             return ["name": s.localizedName, "ref": Screens.ref(for: s), "visibleAX": [v.minX, v.minY, v.width, v.height]]
         }
-        // Roh: alle AX-Fenster ohne Filter + CG-Fensterliste, um seltsame Apps zu verstehen
+        // Raw: all AX windows unfiltered + CG window list, to understand odd apps
         let raw = WindowInspector.regularApps().map { app -> [String: Any] in
             let el = AX.app(app.processIdentifier)
             var v: CFTypeRef?

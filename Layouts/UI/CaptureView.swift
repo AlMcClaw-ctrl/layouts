@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// „Aktuelles Layout speichern“: Name vergeben, Fenster auswählen.
+/// “Save Current Layout”: pick a name and the windows.
 struct CaptureView: View {
     @Environment(PresetStore.self) private var store
     @Environment(LayoutEngine.self) private var engine
@@ -17,10 +17,10 @@ struct CaptureView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            TextField("Name, z. B. „Coding“", text: $name)
+            TextField("Name, e.g. “Coding”", text: $name)
                 .textFieldStyle(.roundedBorder)
 
-            Text("Fenster, die ins Preset sollen:")
+            Text("Windows to include:")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
 
@@ -28,7 +28,7 @@ struct CaptureView: View {
                 Toggle(isOn: $row.selected) {
                     VStack(alignment: .leading) {
                         Text(row.info.appName).bold()
-                        Text(row.info.title.isEmpty ? "(ohne Titel)" : row.info.title)
+                        Text(row.info.title.isEmpty ? "(untitled)" : row.info.title)
                             .font(.caption)
                             .foregroundStyle(.secondary)
                             .lineLimit(1)
@@ -38,17 +38,17 @@ struct CaptureView: View {
             .frame(minHeight: 220)
 
             if store.preset(named: name) != nil {
-                Text("Ein Preset mit diesem Namen wird überschrieben.")
+                Text("A preset with this name will be replaced.")
                     .font(.caption)
                     .foregroundStyle(.orange)
             }
 
             HStack {
-                Button("Neu einlesen", action: reload)
+                Button("Refresh", action: reload)
                 Spacer()
-                Button("Abbrechen") { dismiss() }
+                Button("Cancel") { dismiss() }
                     .keyboardShortcut(.cancelAction)
-                Button("Speichern", action: save)
+                Button("Save", action: save)
                     .keyboardShortcut(.defaultAction)
                     .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty || !rows.contains { $0.selected })
             }
@@ -65,7 +65,7 @@ struct CaptureView: View {
     private func save() {
         let trimmed = name.trimmingCharacters(in: .whitespaces)
         store.upsert(engine.capture(name: trimmed, windows: rows.filter(\.selected).map(\.info)))
-        engine.status = "„\(trimmed)“ gespeichert"
+        engine.status = "Saved “\(trimmed)”"
         name = ""
         dismiss()
     }

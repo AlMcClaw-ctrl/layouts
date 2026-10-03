@@ -1,7 +1,7 @@
 import AppKit
 import SwiftUI
 
-/// Hält das umgebende Fenster über allen normalen Fenstern – auch wenn andere Apps aktiv werden.
+/// Keeps the hosting window above all normal windows – even when other apps become active.
 struct WindowLevel: NSViewRepresentable {
     var floating: Bool
 

@@ -1,6 +1,6 @@
 import AppKit
 
-/// Gemeinsamer Zustand für Menü, Einstellungen, URL-Schema und Kurzbefehle.
+/// Shared state for menu, settings, URL scheme and Shortcuts.
 @MainActor
 final class LayoutsCore {
     static let shared = LayoutsCore()
@@ -29,8 +29,8 @@ final class LayoutsCore {
         }
     }
 
-    /// Bildschirm an-/abgesteckt → passendes Preset automatisch anwenden.
-    /// Kurz warten: macOS meldet beim Umstecken mehrere Änderungen hintereinander.
+    /// Display connected/disconnected → apply the matching preset automatically.
+    /// Wait briefly: macOS reports several changes in a row while reconnecting.
     private func screensChanged() {
         screenChange?.cancel()
         screenChange = Task {
