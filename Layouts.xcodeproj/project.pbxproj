@@ -23,6 +23,7 @@
 		C07B2EAEB14C46B0173D78DC /* WindowInspector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91D9911CCF937B9C5677408B /* WindowInspector.swift */; };
 		C4E0518FC3ECC4E10E2383F0 /* SlotInspector.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8386F3D0AA6F0E9A07FF59D /* SlotInspector.swift */; };
 		C99FB5CC598B821E719F5D51 /* LayoutsCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5AD52092D728ED6EBD20912 /* LayoutsCore.swift */; };
+		CD696EB49207076009E4EBDD /* WindowSnapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551239D894A22E4925ED83E1 /* WindowSnapper.swift */; };
 		CFDFD81D4AB3A56C2C7B5882 /* WindowLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A6C0B8BB00A43372AB338E7 /* WindowLevel.swift */; };
 		ECE761D4D44CF66F4F6F4D09 /* LayoutIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = B34303BCA95D6D5E51E2CF77 /* LayoutIntents.swift */; };
 		ED66FEDC07F6E44DDCA42AF7 /* LayoutEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1562E3F93AB804B7088094AD /* LayoutEngine.swift */; };
@@ -37,6 +38,7 @@
 		3A0AA8479BED26A06EBA48A5 /* CaptureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureView.swift; sourceTree = "<group>"; };
 		3A105540EE4AA4683DFAB235 /* Layouts.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Layouts.entitlements; sourceTree = "<group>"; };
 		4CC03348EA0CD00F557E1E0B /* AppCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCatalog.swift; sourceTree = "<group>"; };
+		551239D894A22E4925ED83E1 /* WindowSnapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowSnapper.swift; sourceTree = "<group>"; };
 		61EAA2FD2D5123C99BCA9AAC /* PresetEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetEditor.swift; sourceTree = "<group>"; };
 		69C109C165F00B840A8C6CA9 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		7A6C0B8BB00A43372AB338E7 /* WindowLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowLevel.swift; sourceTree = "<group>"; };
@@ -154,6 +156,7 @@
 				1562E3F93AB804B7088094AD /* LayoutEngine.swift */,
 				C51361883FA35E3D1265110F /* Screens.swift */,
 				91D9911CCF937B9C5677408B /* WindowInspector.swift */,
+				551239D894A22E4925ED83E1 /* WindowSnapper.swift */,
 			);
 			path = Engine;
 			sourceTree = "<group>";
@@ -254,6 +257,7 @@
 				C4E0518FC3ECC4E10E2383F0 /* SlotInspector.swift in Sources */,
 				C07B2EAEB14C46B0173D78DC /* WindowInspector.swift in Sources */,
 				CFDFD81D4AB3A56C2C7B5882 /* WindowLevel.swift in Sources */,
+				CD696EB49207076009E4EBDD /* WindowSnapper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -338,7 +342,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.1;
+				MARKETING_VERSION = 0.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = io.github.almcclaw.Layouts;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 6.0;
@@ -360,7 +364,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.1;
+				MARKETING_VERSION = 0.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = io.github.almcclaw.Layouts;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 6.0;

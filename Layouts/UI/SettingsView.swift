@@ -1,3 +1,4 @@
+import KeyboardShortcuts
 import ServiceManagement
 import SwiftUI
 
@@ -8,6 +9,8 @@ struct SettingsView: View {
         TabView {
             PresetsTab()
                 .tabItem { Label("Presets", systemImage: "rectangle.split.2x1") }
+            SnapTab()
+                .tabItem { Label("Snapping", systemImage: "rectangle.righthalf.inset.filled.arrow.right") }
             GeneralTab()
                 .tabItem { Label("General", systemImage: "gearshape") }
         }
@@ -84,6 +87,38 @@ private struct PresetsTab: View {
         copy.slots = copy.slots.map { var s = $0; s.id = UUID(); return s }
         store.presets.append(copy)
         selected = copy.id
+    }
+}
+
+private struct SnapTab: View {
+    @AppStorage(WindowSnapper.enabledKey) private var enabled = true
+
+    var body: some View {
+        Form {
+            Section {
+                Toggle("Snap the focused window with keyboard shortcuts", isOn: $enabled)
+                    .onChange(of: enabled) { _, _ in
+                        let core = LayoutsCore.shared
+                        Hotkeys.register(store: core.store, engine: core.engine)
+                    }
+            } footer: {
+                Text("Press ⌃⌥← or ⌃⌥→ repeatedly to cycle through ½, ⅔ and ⅓ of the screen.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            Section("Shortcuts") {
+                ForEach(SnapAction.allCases) { action in
+                    LabeledContent {
+                        KeyboardShortcuts.Recorder(for: action.name)
+                    } label: {
+                        Label(action.title, systemImage: action.symbol)
+                    }
+                }
+            }
+            .disabled(!enabled)
+        }
+        .formStyle(.grouped)
     }
 }
 

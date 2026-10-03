@@ -12,6 +12,7 @@ enum Hotkeys {
 
     static func register(store: PresetStore, engine: LayoutEngine) {
         KeyboardShortcuts.removeAllHandlers()
+        WindowSnapper.registerHandlers()
         let defaults = UserDefaults.standard
         let usedNow = Set(store.presets.compactMap { KeyboardShortcuts.getShortcut(for: name(for: $0)) })
 

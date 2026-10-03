@@ -37,7 +37,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if !AXPermission.isTrusted { AXPermission.request() }
     }
 
-    /// layouts://apply?name=Coding · layouts://capture?name=New · layouts://settings · layouts://dump
+    /// layouts://apply?name=Coding · layouts://capture?name=New · layouts://snap?action=leftHalf · layouts://settings · layouts://dump
     func application(_ application: NSApplication, open urls: [URL]) {
         for url in urls { Task { await handle(url) } }
     }
@@ -56,6 +56,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             guard let name, !name.isEmpty else { return }
             store.upsert(engine.capture(name: name, windows: engine.capturableWindows()))
             engine.status = "Saved “\(name)”"
+        case "snap":
+            let value = URLComponents(url: url, resolvingAgainstBaseURL: false)?
+                .queryItems?.first { $0.name == "action" }?.value
+            if let value, let action = SnapAction(rawValue: value) { WindowSnapper.perform(action) }
         case "settings":
             NSApp.activate()
             NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)

@@ -18,6 +18,14 @@ A tiny native macOS menu bar app. Arrange your windows once (say Chrome on the l
 - **One-hotkey layouts:** ⌃⌥1 … ⌃⌥9 are assigned automatically, and every shortcut can be changed.
 - **Snapshot the current setup:** "Save current layout…" captures your visible windows as a new preset.
 - **Visual editor:** a to-scale preview of your display. Drag tiles freely, resize them from the corner, and edges snap magnetically to the screen and to other tiles (hold ⌥ for no snapping). An optional 1/24 grid is available.
+- **Snap any window with the keyboard**, Rectangle-style:
+  - ⌃⌥← / ⌃⌥→: left/right half. Press again to cycle through ½, ⅔ and ⅓.
+  - ⌃⌥↑ / ⌃⌥↓: top/bottom half.
+  - ⌃⌥D / F / G: thirds. ⌃⌥E / T: two thirds.
+  - ⌃⌥↩: maximize. ⌃⌥C: center. ⌃⌥⌫: restore.
+  - ⌃⌥⌘→: move to the next display.
+
+  Every shortcut can be changed, and snapping can be turned off.
 - **Align to another window:** "Fill the space next to Chrome", "same size, side by side", "same row".
 - **Clears the clutter:** windows that are not part of the preset get minimized (or their apps hidden, or left alone, chosen per preset).
 - **Launches what is missing:** apps that aren't running get started. Missing windows are opened through the app's *New Window* menu item, a URL (Chromium browsers open a real new window) or a Terminal command, for example `cd ~/project && claude`.
@@ -28,6 +36,7 @@ A tiny native macOS menu bar app. Arrange your windows once (say Chrome on the l
 - **URL scheme** for Raycast, Alfred, Stream Deck and similar tools:
   - `layouts://apply?name=Coding`
   - `layouts://capture?name=New`
+  - `layouts://snap?action=leftHalf` (`rightHalf`, `maximize`, `center`, `restore`, …)
   - `layouts://settings`
 - **Plain JSON storage** in `~/Library/Application Support/Layouts/presets.json`. You can edit it by hand or put it under version control.
 
